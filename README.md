@@ -1,2 +1,2 @@
 # MyLeetcodeSolutions
-[Profile](https://leetcode.com/tianyouli/)
+[My profile](https://leetcode.com/tianyouli/)
