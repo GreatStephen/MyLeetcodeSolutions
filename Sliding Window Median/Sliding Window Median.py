@@ -7,9 +7,17 @@ class Solution:
         ans = []
         for i,n in enumerate(nums):
             if i<k:
-                heapq.heappush(maxh, -1*n)
-                while len(maxh)-len(minh)>=2:
-                    heapq.heappush(minh, -1*heapq.heappop(maxh))
+                # heapq.heappush(maxh, -1*n)
+                # while len(maxh)-len(minh)>=2:
+                #     heapq.heappush(minh, -1*heapq.heappop(maxh))
+                if not maxh:
+                    heapq.heappush(maxh, -1*n)
+                else:
+                    if n<=(-1*maxh[0]):
+                        heapq.heappush(maxh, -1*n)
+                        if len(maxh)-len(minh)>=2:
+                            heapq.heappush(minh, -1*heapq.heappop(maxh))
+                    
                 if i==k-1:
                     median = -1*maxh[0] if k&1 else (minh[0]-maxh[0])/2
                     ans.append(median)
