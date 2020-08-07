@@ -4,20 +4,23 @@ class Solution:
         heapq.heapify(maxh)
         heapq.heapify(minh)
         
+        def push(n):
+            if not maxh:
+                heapq.heappush(maxh, -1*n)
+            else:
+                if n<(-1*maxh[0]):
+                    heapq.heappush(maxh, -1*n)
+                    if len(maxh)-len(minh)>=2:
+                        heapq.heappush(minh, -1*heapq.heappop(maxh))
+                else:
+                    heapq.heappush(minh, n)
+                    if len(minh)>len(maxh):
+                        heapq.heappush(maxh, -1*heapq.heappop(minh))
+        
         ans = []
         for i,n in enumerate(nums):
             if i<k:
-                # heapq.heappush(maxh, -1*n)
-                # while len(maxh)-len(minh)>=2:
-                #     heapq.heappush(minh, -1*heapq.heappop(maxh))
-                if not maxh:
-                    heapq.heappush(maxh, -1*n)
-                else:
-                    if n<=(-1*maxh[0]):
-                        heapq.heappush(maxh, -1*n)
-                        if len(maxh)-len(minh)>=2:
-                            heapq.heappush(minh, -1*heapq.heappop(maxh))
-                    
+                push(n)                    
                 if i==k-1:
                     median = -1*maxh[0] if k&1 else (minh[0]-maxh[0])/2
                     ans.append(median)
@@ -30,6 +33,8 @@ class Solution:
                         idx += 1
                     maxh[idx] = maxh[-1]
                     maxh.pop()
+                    if len(minh)>len(maxh): # 注意，从maxh删除元素后，有可能导致minh>maxh，需要重新平衡
+                        heapq.heappush(maxh, -1*heapq.heappop(minh))
                     heapq.heapify(maxh)                                      
                 else: # remove element from minh
                     idx = 0
@@ -39,9 +44,7 @@ class Solution:
                     minh.pop()
                     heapq.heapify(minh)
                 
-                heapq.heappush(maxh, -1*n)
-                while len(maxh)-len(minh)>=2:
-                    heapq.heappush(minh, -1*heapq.heappop(maxh)) 
+                push(n)
                 median = -1*maxh[0] if k&1 else (minh[0]-maxh[0])/2
                 ans.append(median)
         return ans
