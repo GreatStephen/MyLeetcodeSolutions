@@ -1,43 +1,49 @@
-# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
-class Solution:
-    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
-        # 用stack存储所有的数字。
-        s1, s2 = deque(), deque()
-        cur = l1
-        while cur:
-            s1.append(cur.val)
-            cur = cur.next
-        cur = l2
-        while cur:
-            s2.append(cur.val)
-            cur = cur.next
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Codec:
+
+    def serialize(self, root: TreeNode) -> str:
+        # 这道题用preorder。因为BST的特性是，左边的一定小于root，右边的一定大于root
+        # 所以串行化后的字符串，只需要找到小于root和大于root的分界线，即可递归
+        def preOrder(cur):
+            if not cur:
+                return None
+            left, right = preOrder(cur.left), preOrder(cur.right)
+            ans = str(cur.val)
+            if left: ans += ','+left
+            if right: ans += ','+right
+            return ans
         
-        carry = 0
-        head, temp = None, None
-        while s1 and s2: # 倒序加两个stack
-            val = s1[-1]+s2[-1]+carry
-            carry = val//10
-            val %= 10
-            head = ListNode(val, temp)
-            temp = head
-            s1.pop()
-            s2.pop()
+        ans = preOrder(root)
+        return ans
         
-        s = s1 if s1 else s2
-        while s: # 如果剩了某一个stack，就把它加进去
-            val = s[-1]+carry
-            carry = val//10
-            val %= 10
-            head = ListNode(val, temp)
-            temp = head
-            s.pop()
-        if carry:
-            head = ListNode(1, temp)
-            temp = head
-        return temp
+
+    def deserialize(self, data: str) -> TreeNode:
+        def parse(nodes):
+            if not nodes:
+                return None
+            root = TreeNode(nodes[0])
+            left, right = [], []
+            idx = -1
+            for i in range(1, len(nodes)):
+                if nodes[i]<nodes[0]: left.append(nodes[i])
+                else: right.append(nodes[i])
+            root.left = parse(left)
+            root.right = parse(right)
+            return root
+                
         
+        if not data: return None
+        nodes = data.split(',')
+        nodes = list(map(int, nodes))
+        return parse(nodes)
         
+
+# Your Codec object will be instantiated and called as such:
+# codec = Codec()
+# codec.deserialize(codec.serialize(root))
