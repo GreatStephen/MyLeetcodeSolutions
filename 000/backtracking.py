@@ -1,3 +1,6 @@
+# 46
+
+# 框架
 result = []
 def backtrack(路径, 选择列表):
     if 满足结束条件:
